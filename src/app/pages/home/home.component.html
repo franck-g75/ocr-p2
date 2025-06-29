@@ -1,0 +1,30 @@
+<h2>Olympic games app</h2>
+<hr />
+<p>{{ (olympics$ | async)?.length }} data loaded</p>
+<hr />
+ <div class="container">
+  <div class="row">
+    <div class="col-12  titre">
+      <b>Medals per country</b>
+    </div>
+  </div>
+  <div class="row">
+    <div *ngFor="let item of (this.getStat() | async); let i = index;">
+    <div *ngIf="i==0" class="col-lg-6 col-md-12  container-left">
+      <div class=" col-gauche boite-blanche">
+        <b>Numbers of JOs</b> <br> {{item}}
+      </div>
+    </div>
+    <div *ngIf="i==1" class="col-lg-6 col-md-12 container-right">
+      <div class=" col-droite boite-blanche">
+        <b>Number of countries</b> <br> {{item}}
+      </div>
+    </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12 graphique">
+      <p>graphique</p> <br>
+    </div>
+  </div>
+</div> 
