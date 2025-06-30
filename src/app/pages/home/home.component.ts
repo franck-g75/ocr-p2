@@ -37,9 +37,9 @@ export class HomeComponent implements OnInit {
   }
 
   //Pour éviter d'appeler n fois l'observable : ne faire qu'une seule fonction qui retourne tout...
-  //elle est en fait appelée n fois par le template n= 1 sans log n=4 avec log
+  //elle est en fait appelée n fois par le template n= 1 sans log, n=4 avec log
   getStat(): Observable<Number[]> {
-    //this.l.info('home.getStat : entering fct');
+    this.l.info('home.getStat : entering fct');
     const tabNb: number[] = [];
     //construction d'un tableau 
     if (this.olympicService.getLoadComplete()) {

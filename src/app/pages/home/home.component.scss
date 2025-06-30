@@ -1,7 +1,10 @@
 .container{
   display: table;
   width: 100%;
+  padding: 2px;
+  margin: 2px;
 }
+/*
 .container-right{
   float: right;
   display: cell;
@@ -14,7 +17,30 @@
   width: 49%;
   max-height: fit-content;
 }
+  */
+.container-stat{
+  display: flex;
+  flex-direction: row; //horizontal by default
+  border: 1px solid rgb(0,0,0);
+  //align-items: center;//ne fonctionne pas (pour le vertical...)
+  //text-align: center;//ne fonctionne pas
+  //align-self: center;//ne fonctionne pas
+  //align-content: center;//ne fonctionne pas
+  justify-content: center;
+
+  width: 100%;
+  padding: 10px;
+  margin: 2px;
+
+  //media query for small screen
+  @media (max-width: 300px) {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
 .boite-blanche{
+  flex-flow: row;
   max-width: fit-content;
   background-color: white;
   border: 3px solid rgb(11, 160, 11);
@@ -24,15 +50,19 @@
   max-height: fit-content;
   text-align: center;
   padding: 5px;
+  margin: 5px;
 }
+/*
 .col-gauche{
   float: right;
 }
 .col-droite{
   float: left;
 }
+  */
 .row{
-    align-content: center;
+    width: 90%;
+    margin: 2px;
     padding: 2px;
 }
 
@@ -42,8 +72,8 @@
     border-radius: 10px;
     max-width: fit-content;
     text-align: center;
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: auto;  //centrer
+    margin-right: auto; //centrer
     padding: 10px;
 }
 .graphique{

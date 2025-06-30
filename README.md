@@ -1,6 +1,10 @@
 # OlympicGamesStarter
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.0.3.
+Ceci est un projet de test, pour aprendre à coder en angular.
+
+
+
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 19.2.x
 
 Don't forget to install your node_modules before starting (`npm install`).
 
@@ -12,7 +16,12 @@ Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The appli
 
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
-## Where to start
+## Où démarrer ?
+
+J'ai gardé l'architecture déjà définie dans le projet.
+
+
+
 
 As you can see, an architecture has already been defined for the project. It is just a suggestion, you can choose to use your own. The predefined architecture includes (in addition to the default angular architecture) the following:
 

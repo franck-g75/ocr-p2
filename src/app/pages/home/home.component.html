@@ -9,16 +9,14 @@
     </div>
   </div>
   <div class="row">
+    <div class="container-stat">
     <div *ngFor="let item of (this.getStat() | async); let i = index;">
-    <div *ngIf="i==0" class="col-lg-6 col-md-12  container-left">
-      <div class=" col-gauche boite-blanche">
-        <b>Numbers of JOs</b> <br> {{item}}
-      </div>
+    <div *ngIf="i==0" class="boite-blanche">
+      <b>Numbers of JOs</b> <br> {{item}}
     </div>
-    <div *ngIf="i==1" class="col-lg-6 col-md-12 container-right">
-      <div class=" col-droite boite-blanche">
-        <b>Number of countries</b> <br> {{item}}
-      </div>
+    <div *ngIf="i==1" class="boite-blanche">
+      <b>Number of countries</b> <br> {{item}}
+    </div>
     </div>
     </div>
   </div>
