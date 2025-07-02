@@ -10,7 +10,7 @@ import { MyLoggingService } from 'src/app/core/services/my.loging.service';
 export class OlympicService {
   private olympicUrl = './assets/mock/olympic.json';
   private olympics$ = new BehaviorSubject<Olympic[] | null>(null);
-
+  private olympics: Olympic[] | null = null;
   private loadComplete: boolean = false;
 
   constructor(
@@ -25,6 +25,7 @@ export class OlympicService {
     return this.http.get<Olympic[]>(this.olympicUrl).pipe(
       tap(value => {
         this.l.info("olymic.Service : lecture du fichier en cours... ")
+        this.olympics = value;
         this.olympics$.next(value);
         console.log(value);
       }),

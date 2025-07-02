@@ -19,15 +19,10 @@ export class AppComponent implements OnInit {
     //l'idee : régler un booleen à true dans le service une fois que la lecture du fichier est complétée
     
     //console.log('app appel de loadInitialData()');
-    this.l.info("app : appel de loadInitialData()");
-    this.olympicService.loadInitialData().pipe(take(1)).subscribe({
-      error: () => console.log("app : error subscribe"),
-      complete: () => {
-          //console.log('app : observable complete ');
-          this.l.info("app : olympics complété");
-          this.olympicService.setLoadComplete(true);
-        }
-    });
+    this.l.info("app");
+    
+    //Finalement la souscription du décompte des nb de JO et de pays se retrouve dans home
+    //quand nous aurons besoin du détail nous referons une requete ciblé sur un pays.
   }
 }
  

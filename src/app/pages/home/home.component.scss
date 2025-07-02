@@ -1,31 +1,18 @@
+
+
+
+
 .container{
   display: table;
   width: 100%;
   padding: 2px;
   margin: 2px;
 }
-/*
-.container-right{
-  float: right;
-  display: cell;
-  width: 49%;
-  max-height: fit-content;
-}
-.container-left{
-  float: left;
-  display: cell;
-  width: 49%;
-  max-height: fit-content;
-}
-  */
+
 .container-stat{
   display: flex;
   flex-direction: row; //horizontal by default
   border: 1px solid rgb(0,0,0);
-  //align-items: center;//ne fonctionne pas (pour le vertical...)
-  //text-align: center;//ne fonctionne pas
-  //align-self: center;//ne fonctionne pas
-  //align-content: center;//ne fonctionne pas
   justify-content: center;
 
   width: 100%;
@@ -52,14 +39,7 @@
   padding: 5px;
   margin: 5px;
 }
-/*
-.col-gauche{
-  float: right;
-}
-.col-droite{
-  float: left;
-}
-  */
+
 .row{
     width: 90%;
     margin: 2px;
@@ -78,4 +58,26 @@
 }
 .graphique{
     text-align: center; 
+}
+
+.tooltip{
+  background-color: green !important;
+  color: white;
+}
+.pie-label-line{
+  line-height-step: 0;
+  line-clamp: 0;
+  max-lines: 0;
+  line-height: 0px;
+  line-break: 0;
+  -ms-flex-line-pack: justify;
+
+}
+.line{
+  line-height-step: 0;
+  line-clamp: 0;
+  max-lines: 0;
+  line-height: 0px;
+  line-break: 0;
+ 
 }

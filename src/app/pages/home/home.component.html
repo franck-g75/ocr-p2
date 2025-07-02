@@ -10,7 +10,7 @@
   </div>
   <div class="row">
     <div class="container-stat">
-    <div *ngFor="let item of (this.getStat() | async); let i = index;">
+    <div *ngFor="let item of (this.getStat$ | async); let i = index;">
     <div *ngIf="i==0" class="boite-blanche">
       <b>Numbers of JOs</b> <br> {{item}}
     </div>
@@ -22,7 +22,26 @@
   </div>
   <div class="row">
     <div class="col-12 graphique">
-      <p>graphique</p> <br>
+      
+      <ngx-charts-pie-chart
+        [results]="pieDataCalc"
+        [view]="[400, 400]"
+        [labels]="true"
+        [ngClass]="tooltipTemplate"
+        [labelFormatting]="labelFormatting"
+        [doughnut]="false"
+        [tooltipDisabled]="false"
+        [legend]="false"
+        [maxLabelLength]="200"
+        [ariaChecked]="true">
+         <ng-template #tooltipTemplate let-model="model">
+            <div class="tooltip">
+                {{model.name}}<br>
+                🎖{{model.value}}
+            </div>
+        </ng-template>   <!-- [routerLink]="alerter('{{name}}')"--> 
+      </ngx-charts-pie-chart>
+
     </div>
   </div>
 </div> 
