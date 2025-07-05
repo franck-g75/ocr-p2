@@ -15,14 +15,10 @@ export class AppComponent implements OnInit {
   ) {console.log('app appel du constructeur');}
 
   ngOnInit(): void {
-    
-    //l'idee : régler un booleen à true dans le service une fois que la lecture du fichier est complétée
-    
-    //console.log('app appel de loadInitialData()');
-    this.l.info("app");
-    
-    //Finalement la souscription du décompte des nb de JO et de pays se retrouve dans home
-    //quand nous aurons besoin du détail nous referons une requete ciblé sur un pays.
+    //Data loading for the home and the detail page. No reloading on page changing
+    //Loading once, run any page...
+    this.l.info("app : appel de load initial data...");
+    this.olympicService.loadInitialData().pipe(take(1)).subscribe();
   }
 }
  

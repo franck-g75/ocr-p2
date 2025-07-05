@@ -1,10 +1,10 @@
-import { Component,  OnInit } from '@angular/core';
-import { BehaviorSubject, Observable, of, take, } from 'rxjs';
-import { MedalStat } from 'src/app/core/models/MedalStat';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { BehaviorSubject, Observable, of, take, tap } from 'rxjs';
 import { Olympic } from 'src/app/core/models/Olympic';
-import { OlympicService } from 'src/app/core/services/olympic.service';
+import { Statistic } from 'src/app/core/models/Statistic';
 import { MyLoggingService } from 'src/app/core/services/my.loging.service';
-import { PieLabelComponent } from '@swimlane/ngx-charts';
+import { OlympicService } from 'src/app/core/services/olympic.service';
 
 @Component({
   selector: 'app-home',
@@ -14,93 +14,83 @@ import { PieLabelComponent } from '@swimlane/ngx-charts';
 
 export class HomeComponent implements OnInit {
 
-  public olympics$: Observable<Olympic[] | null> = of(null);
-  public getStat$: Observable<Number[] | null> = of(null);
-  public pieDataCalc: MedalStat[] | null = null;
+  public olympics$: Observable<Olympic[] | null> = of(null); //readonly copy of original data
+  public getStat$: Observable<Number[] | null> = of(null); //for the two numbers below title
+  public pieData: Statistic[] | null = null; //datas of the pie chart
 
-  colorScheme = {
-    domain: ['#5AA454', '#000000', '#C7B42C']
-  };
+  private myOlympicList: Olympic[] | null = [];
 
   constructor(
     private olympicService: OlympicService,
-    private l: MyLoggingService
-  ) { 
-    
-  }
+    private myLog: MyLoggingService,
+    private router: Router
+  ) {  }
 
+  /**
+   * 
+   */
   ngOnInit(): void {
 
-    this.l.info("home ngOnInit ");
+    this.myLog.info("home.ngOnInit ");
 
-    this.olympics$ = this.olympicService.getOlympics();
+    this.olympicService.getOlympics().subscribe(value => {
+      this.myOlympicList = value;
+      this.myLog.info("home.ngOnInit : valeur trouvée, remplissage du tableau");
+      const tabNb: number[] = [];
+      try{
+        this.myLog.info("home.ngOnInit : try push...");
+        tabNb.push(this.olympicService.countNbJO());
+        tabNb.push(this.olympicService.countNbCountries());
+      } catch(e: any) {
+        this.myLog.info("home.ngOnInit : push non fructueux");
+      }
 
-    //https://levio.ca/expertises/introduction-a-rxjs-dans-angular-observables-subjects-et-behaviorsubjects/
-    //console.log("home.ngOnInit(console)");
-    //this.l.info("home.ngOnInit(l)");
+      this.myLog.info("home.ngOnInit tabNb.length=" + tabNb.length + ' : ' + tabNb[0] + ' ' + tabNb[1]);
+      this.getStat$ = new BehaviorSubject<number[]>(tabNb).pipe(
+        take(1),
+        tap(value=>this.myLog.info("home.ngOnInit " + value.toString()))
+      );
 
-    this.olympicService.loadInitialData().pipe(take(1)).subscribe({
-      error: () => this.l.error("app : error subscribe"),
-      complete: () => {
-          //console.log('app : observable complete ');
-          this.l.info("app : olympics complété");
-          //this.olympicService.setLoadComplete(true);
-          const tabNb: number[] = [];
-          //construction d'un tableau 
-          tabNb.push(this.olympicService.countNbJO());
-          tabNb.push(this.olympicService.countNbCountries());    
-          
-          this.l.info("home ngOnInit tabNb=" + tabNb.length + ' ' + tabNb[0] + tabNb[1]);
-          this.getStat$ = new BehaviorSubject<number[]>(tabNb).pipe(take(1));//,tap(value=>console.log(value)));
+      this.pieData = new Array(0);
+      //grab the numbers
+      this.myOlympicList?.forEach((o)=>{
+        this.myLog.info("home.ngOnInit pieData=" + o.country + ' ' + this.olympicService.getTotalMedals(o) ) ;
+        let medalStat: Statistic = {name: o.id + '.' + o.country,value: this.olympicService.getTotalMedals(o)};
+        this.pieData?.push(medalStat);
+        });
 
-          let olympicList: Olympic[] | null = [];
-          this.olympicService.getOlympics().subscribe(data => {
-            olympicList = data;
-          });
-          let nbTotalMedals: number = 0;
-          this.pieDataCalc = new Array(0);
-          //grab the numbers
-          olympicList?.forEach((o)=>{
-            this.l.info("pieDataCalc=" + o.country + ' ' + this.olympicService.getTotalMedals(o) ) ;
-            let medalStat: MedalStat = {name: o.country,value: this.olympicService.getTotalMedals(o)};
-            nbTotalMedals += this.olympicService.getTotalMedals(o);
-            this.pieDataCalc?.push(medalStat);
-          });
-        } //complete
     });//subscribe
+    
   }//ngOnInit
 
-  
-
-
-setLabelFormatting(c: PieLabelComponent): string {
-  return `
-    <div style="display: flex; align-items: center;" class="tooltip">
-      <span>${c.label}</span>
-      <div style="flex: 1; height: 1px; background-color: #000; margin-left: 8px;"></div>
-    </div>
-  `;
-}
-
-
+/**
+ * set the labels in the pie chart
+ * @param name : this name will contain the name you defined in chartData[]
+ * @returns void
+ */
 labelFormatting(name: string) { // this name will contain the name you defined in chartData[]
     let self: any = this; // this "this" will refer to the chart component (pun intented :))
 
-    let data = self.series.filter((x: MedalStat) => x.name == name); // chartData will be present in
-                                                        // series along with the label
+    let data = self.series.filter((x: Statistic) => x.name == name); // chartData will be present in
+                                                                     // series along with the label
+    let nom: string = data[0].name;
+    if (data[0].name.indexOf('.') > 0) {
+      nom = data[0].name.split('.')[1];
+    }
     if(data.length > 0) {
-      return `<hr>${data[0].name}`;
+      return nom;//return `${data[0].name}`;
     } else {
       return name;
     }
   }
 
-
-
-alerter(pCountry: string){
-  this.l.info("country = " + pCountry);
-  alert("The country is : " + pCountry);
+/**
+ * detail link in the pie chart
+ * @param pCountryEvent 
+ */
+goDetail(pCountryEvent: Statistic): void {
+  this.myLog.info("CLIC!....   url?country=" + pCountryEvent.name.split('.')[0]);
+  this.router.navigate(['/detail'], {queryParams: {country: pCountryEvent.name.split('.')[0]}});
 }
 
-
-} // class
+}// class

@@ -1,0 +1,39 @@
+<div><a routerLink="">Go back</a></div> 
+<div class="container">
+  <div class="row">
+    <div class=" green-box">
+      <b>{{countryName}}</b>
+    </div>
+  </div>
+  <div class="row">
+    <div class="container-stat">
+    <div *ngFor="let item of (this.getStat$ | async); let i = index;">
+    <div *ngIf="i==0" class="white-box">
+      <b>Numbers of entries</b> <br> {{item}}
+    </div>
+    <div *ngIf="i==1" class="white-box">
+      <b>Total number of medals</b> <br> {{item}}
+    </div>
+    <div *ngIf="i==2" class="white-box">
+      <b>Total number of athletes</b> <br> {{item}}
+    </div>
+    </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="line-chart">
+    <ngx-charts-line-chart
+      [results]="lineData"
+      [xAxis]="true"
+      [yAxis]="true"
+      [tooltipDisabled]="false"
+      [legend]="false"
+      [autoScale]="true"
+      [showXAxisLabel]="true"
+      [showYAxisLabel]="true"
+      [xAxisLabel]="'Dates'"
+      [yAxisLabel]="'Number of medals'">
+    </ngx-charts-line-chart>
+    </div>
+  </div>
+</div>

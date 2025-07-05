@@ -1,47 +1,41 @@
-<h2>Olympic games app</h2>
-<hr />
-<p>{{ (olympics$ | async)?.length }} data loaded</p>
-<hr />
+
  <div class="container">
   <div class="row">
-    <div class="col-12  titre">
+    <div class="green-box">
       <b>Medals per country</b>
     </div>
   </div>
   <div class="row">
     <div class="container-stat">
-    <div *ngFor="let item of (this.getStat$ | async); let i = index;">
-    <div *ngIf="i==0" class="boite-blanche">
-      <b>Numbers of JOs</b> <br> {{item}}
-    </div>
-    <div *ngIf="i==1" class="boite-blanche">
-      <b>Number of countries</b> <br> {{item}}
-    </div>
-    </div>
+      <div *ngFor="let item of (this.getStat$ | async); let i = index;">
+        <div *ngIf="i==0" class="white-box">
+          <b>Numbers of JOs</b> <br> {{item}}
+        </div>
+        <div *ngIf="i==1" class="white-box">
+          <b>Number of countries</b> <br> {{item}}
+        </div>
+      </div>
     </div>
   </div>
   <div class="row">
-    <div class="col-12 graphique">
-      
-      <ngx-charts-pie-chart
-        [results]="pieDataCalc"
-        [view]="[400, 400]"
+    <div>
+      <!--dont set [view] to be responsive....-->
+      <ngx-charts-pie-chart 
+        [results]="pieData"
         [labels]="true"
-        [ngClass]="tooltipTemplate"
         [labelFormatting]="labelFormatting"
         [doughnut]="false"
         [tooltipDisabled]="false"
         [legend]="false"
         [maxLabelLength]="200"
-        [ariaChecked]="true">
-         <ng-template #tooltipTemplate let-model="model">
-            <div class="tooltip">
-                {{model.name}}<br>
+        (select)="goDetail($event);" >
+        <ng-template #tooltipTemplate let-model="model" >
+            <div class="my-tooltip">  
+                {{model.name.split('.')[1]}}<br>
                 🎖{{model.value}}
             </div>
-        </ng-template>   <!-- [routerLink]="alerter('{{name}}')"--> 
+        </ng-template>  <!-- [routerLink]="alerter('{{name}}')"--> 
       </ngx-charts-pie-chart>
-
     </div>
   </div>
-</div> 
+</div>

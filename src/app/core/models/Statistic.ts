@@ -1,4 +1,4 @@
-export interface MedalStat {
+export interface Statistic {
    name: string;
    value: number;
 }
