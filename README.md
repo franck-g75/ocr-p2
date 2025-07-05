@@ -2,10 +2,6 @@
 
 Ceci est un projet de test, pour aprendre à coder en angular.
 
-## Table des matieres
- - [points négatifs du projet](#Points négatifs du projet)
- - [points positifs du projet](#Points positifs du projet)
-
 ## Points négatifs du projet 
  - HttpClientModule is deprecated
  - http://localhost:4200/detail?country=5 
