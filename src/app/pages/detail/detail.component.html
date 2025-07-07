@@ -7,17 +7,17 @@
   </div>
   <div class="row">
     <div class="container-stat">
-    <div *ngFor="let item of (this.getStat$ | async); let i = index;">
-    <div *ngIf="i==0" class="white-box">
-      <b>Numbers of entries</b> <br> {{item}}
-    </div>
-    <div *ngIf="i==1" class="white-box">
-      <b>Total number of medals</b> <br> {{item}}
-    </div>
-    <div *ngIf="i==2" class="white-box">
-      <b>Total number of athletes</b> <br> {{item}}
-    </div>
-    </div>
+      <div *ngFor="let item of (this.getStat$ | async); let i = index;">
+        <div *ngIf="i==0" class="white-box">
+          <b>Numbers of entries</b> <br> {{item}}
+        </div>
+        <div *ngIf="i==1" class="white-box">
+          <b>Total number of medals</b> <br> {{item}}
+        </div>
+        <div *ngIf="i==2" class="white-box">
+          <b>Total number of athletes</b> <br> {{item}}
+        </div>
+      </div>
     </div>
   </div>
   <div class="row">

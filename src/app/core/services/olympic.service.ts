@@ -1,14 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
-import { Olympic } from '../models/Olympic';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { catchError, take, tap } from 'rxjs/operators';
 import { MyLoggingService } from 'src/app/core/services/my.loging.service';
+import { DetailedStatistic } from '../models/DetailedStatistic';
 import { CountryNotFoundError } from '../models/errors/CountryNotFoundError';
-import { NoOlympicDataAvailableError } from '../models/errors/NoOlympicDataAvailableError';
-import { StartAtOneError } from '../models/errors/StartAtOneError';
 import { EmptyFileFoundError } from '../models/errors/EmptyFileFoundError';
 import { EmptyTableFoundError } from '../models/errors/EmptyTableFoundError';
+import { NoOlympicDataAvailableError } from '../models/errors/NoOlympicDataAvailableError';
+import { StartAtOneError } from '../models/errors/StartAtOneError';
+import { Olympic } from '../models/Olympic';
+import { Participation } from '../models/Participation';
+import { Statistic } from '../models/Statistic';
 @Injectable({
   providedIn: 'root',
 })
@@ -29,21 +32,24 @@ export class OlympicService {
   loadInitialData() {
     return this.http.get<Olympic[]>(this.olympicUrl).pipe(
       tap(value => {
-        this.myLog.debug("olypmic.service : lecture du fichier en cours... ")
-        this.olympics$.next(value);
+        this.myLog.debug("olympic.service : lecture du fichier en cours... ")
+        
         if (!(value instanceof Array)){
           throw new EmptyFileFoundError('EmptyFileFoundError','The file is completely empty');
+        } else if (value.length==0){
+          throw new EmptyTableFoundError('EmptyTableFoundError','The table in the file is empty');
         }
-        if (value.length==0){
-          throw new EmptyTableFoundError('EmptyFileFoundError','The table in the file is empty');
-        } else {
+        /* else {
           this.start=value[0].id;
           if (this.start==1){
             throw new StartAtOneError("StartAtOneError","The ids of the file start at 1 not zero");
           }
         }
-        
-        console.log(value);//write the entire table ine the log...
+        //code never executed because file table start at 1 and the StartAtOneError is raised
+        */
+        //console.log(value);//write the entire table ine the log...
+        this.start=value[0].id;
+        this.olympics$.next(value);
       }),
       catchError((error, caught) => {
         // TODO: improve error handling
@@ -56,12 +62,6 @@ export class OlympicService {
         } else {
           throw new NoOlympicDataAvailableError('NoOlympicDataAvailableError','Sorry file Not found');
         }
-        
-        //alert('Erreur rencontrée' + error);
-        //console.error(error);
-        // can be useful to end loading state and let the user know something went wrong
-        //this.olympics$.next(null);//todo
-        //return caught;
       })
     );
   }
@@ -184,4 +184,94 @@ export class OlympicService {
     }
     return olympics;
   }
+
+  /**
+   * 
+   * @returns the data value to show below the title of Home
+   */
+  public getTopStatHome(): Observable<Number[] | null>{
+    //let retour: BehaviorSubject<Olympic[] | null> = of(null);
+    this.myLog.debug("OlympicService getTopStatHome : remplissage du tableau");
+    const tabNb: number[] = [];
+    try{
+      this.myLog.debug("OlympicService getTopStatHome : try push...");
+      tabNb.push(this.countNbJO());
+      tabNb.push(this.countNbCountries());
+    } catch(e: any) {
+      this.myLog.warn("OlympicService getTopStatHome : push non fructueux (trop tot)");
+    }
+
+    this.myLog.info("OlympicService getTopStatHome tabNb.length=" + tabNb.length + ' : ' + tabNb[0] + ' ' + tabNb[1]);
+    
+    return new BehaviorSubject<number[]>(tabNb).pipe(
+      take(1),
+      tap(value=>this.myLog.debug("OlympicService getTopStatHome = " + value.toString()))
+    );
+          
+  }
+
+  /**
+   * @returns the data values of the pieChart
+   */
+  public getPieChartValues(values: Olympic[] | null): Statistic[] {
+    let pieData = new Array<Statistic>;
+      //grab the numbers of the pie chart
+
+    values?.forEach((olympic)=>{
+      this.myLog.debug("olympicService.getPieChartValues  pieData=" + olympic.country + ' ' + this.getTotalMedals(olympic) ) ;
+      let medalStat: Statistic = {name: olympic.id + '.' + olympic.country,value: this.getTotalMedals(olympic)};
+      pieData?.push(medalStat);
+      });
+    return pieData;
+  }
+
+  /**
+   * 
+   * @param olympic 
+   * @returns the data value to show below the title of Detail
+   */
+  getTopStatDetail(olympic: Olympic): Observable<Number[] | null>{
+    this.myLog.info("OlympicService.getTopStatDetail : push 3 times...");
+    const tabNb: number[] = [];
+    try{
+      this.myLog.debug("OlympicService.getTopStatDetail : try push...");
+      tabNb.push(this.countParticipations(olympic));
+      tabNb.push(this.getTotalMedals(olympic));    
+      tabNb.push(this.getTotalAthletes(olympic));
+      } catch(e: any) {
+        this.myLog.warn("OlympicService.getTopStatDetail : push non fructueux (trop tot)");
+      }
+
+    this.myLog.info("OlympicService.getTopStatDetail tabNb.lenght=" + tabNb.length + ' : ' + tabNb[0] + ' ' + tabNb[1] + ' ' + tabNb[2]);
+    
+    return new BehaviorSubject<number[]>(tabNb).pipe(
+      take(1),
+      tap(value=>this.myLog.debug("OlympicService getTopStatDetail = " + value.toString()))
+    );
+  }
+
+  /**
+   * 
+   * @param olympic 
+   * @returns the data values of the lineChart
+   */
+  getLineChartValues(olympic: Olympic): DetailedStatistic[] | null {
+    let lineData: DetailedStatistic[] | null = null;
+    let participationTab: Participation[] = olympic?.participations;
+    let yearsValues: Statistic[] = [];  //will contain the table of each year results
+    lineData = new Array(0);       //will contain the number of medals for each year.
+    //grab the numbers for the line chart
+    participationTab?.forEach((p)=>{
+      this.myLog.info("OlympicService.getLineChartValues=" + olympic?.country + ' ' + p.year + ' ' + p.medalsCount);
+      yearsValues.push({name: p.year.toString(),value: p.medalsCount});
+    });
+    lineData?.push({name: olympic.country,series: yearsValues});
+    return lineData;    
+  }
+
+
+
+
+
+
 }

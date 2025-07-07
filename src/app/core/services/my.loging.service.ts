@@ -64,7 +64,7 @@ export class MyLoggingService {
         const d: Date = new Date();
         logMsg += d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
       }
-      logMsg += ' ' + LogLevel[level].substring(0,1) + ' ' + msg;
+      logMsg += ' ' + LogLevel[level] + ' ' + msg;
       if (params.length) {
         logMsg += ' - ' + this.formatParams(params);
       }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, of, take, tap } from 'rxjs';
+import { Observable, of, Subject, takeUntil } from 'rxjs';
 import { Olympic } from 'src/app/core/models/Olympic';
 import { Statistic } from 'src/app/core/models/Statistic';
 import { MyLoggingService } from 'src/app/core/services/my.loging.service';
@@ -14,11 +14,11 @@ import { OlympicService } from 'src/app/core/services/olympic.service';
 
 export class HomeComponent implements OnInit {
 
-  public olympics$: Observable<Olympic[] | null> = of(null); //readonly copy of original data
-  public getStat$: Observable<Number[] | null> = of(null); //for the two numbers below title
-  public pieData: Statistic[] | null = null; //datas of the pie chart
+  private destroy$ = new Subject<void>();
 
-  private myOlympicList: Olympic[] | null = [];
+  public olympics$: Observable<Olympic[] | null> = of(null); //readonly copy of original data
+  public getTopStat$: Observable<Number[] | null> = of(null); //for the two numbers below title
+  public pieData: Statistic[] | null = null; //datas of the pie chart
 
   constructor(
     private olympicService: OlympicService,
@@ -27,38 +27,21 @@ export class HomeComponent implements OnInit {
   ) {  }
 
   /**
-   * 
+   * page initialization
    */
   ngOnInit(): void {
 
-    this.myLog.info("home.ngOnInit ");
+    this.myLog.debug("home.ngOnInit ");
 
-    this.olympicService.getOlympics().subscribe(value => {
-      this.myOlympicList = value;
-      this.myLog.info("home.ngOnInit : valeur trouvée, remplissage du tableau");
-      const tabNb: number[] = [];
-      try{
-        this.myLog.info("home.ngOnInit : try push...");
-        tabNb.push(this.olympicService.countNbJO());
-        tabNb.push(this.olympicService.countNbCountries());
-      } catch(e: any) {
-        this.myLog.info("home.ngOnInit : push non fructueux");
+    this.olympicService.getOlympics()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(value => {
+      if (value != null){
+        //get the numbers below the title
+        this.getTopStat$ = this.olympicService.getTopStatHome();
+        //get pieChartValues
+        this.pieData = this.olympicService.getPieChartValues(value);
       }
-
-      this.myLog.info("home.ngOnInit tabNb.length=" + tabNb.length + ' : ' + tabNb[0] + ' ' + tabNb[1]);
-      this.getStat$ = new BehaviorSubject<number[]>(tabNb).pipe(
-        take(1),
-        tap(value=>this.myLog.info("home.ngOnInit " + value.toString()))
-      );
-
-      this.pieData = new Array(0);
-      //grab the numbers
-      this.myOlympicList?.forEach((o)=>{
-        this.myLog.info("home.ngOnInit pieData=" + o.country + ' ' + this.olympicService.getTotalMedals(o) ) ;
-        let medalStat: Statistic = {name: o.id + '.' + o.country,value: this.olympicService.getTotalMedals(o)};
-        this.pieData?.push(medalStat);
-        });
-
     });//subscribe
     
   }//ngOnInit
@@ -93,4 +76,15 @@ goDetail(pCountryEvent: Statistic): void {
   this.router.navigate(['/detail'], {queryParams: {country: pCountryEvent.name.split('.')[0]}});
 }
 
+/**
+ * 
+ */
+ngOnDestroy() {
+  this.destroy$.next();
+  this.destroy$.complete();
+}
+
+
+
 }// class
+

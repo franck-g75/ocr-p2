@@ -7,7 +7,7 @@
   </div>
   <div class="row">
     <div class="container-stat">
-      <div *ngFor="let item of (this.getStat$ | async); let i = index;">
+      <div *ngFor="let item of (this.getTopStat$ | async); let i = index;">
         <div *ngIf="i==0" class="white-box">
           <b>Numbers of JOs</b> <br> {{item}}
         </div>
