@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, of, Subject, takeUntil } from 'rxjs';
+import { Observable, of, Subject, takeUntil, tap } from 'rxjs';
 import { Olympic } from 'src/app/core/models/Olympic';
 import { Statistic } from 'src/app/core/models/Statistic';
 import { MyLoggingService } from 'src/app/core/services/my.loging.service';
@@ -34,14 +34,18 @@ export class HomeComponent implements OnInit {
     this.myLog.debug("home.ngOnInit ");
 
     this.olympicService.getOlympics()
-      .pipe(takeUntil(this.destroy$))
+      .pipe(tap(val => this.myLog.info("home.tap..." + val)),takeUntil(this.destroy$))
       .subscribe(value => {
+
+      //this part of code is read 2 times 
+      //-the first time at the beginning where value is null
+      //-the second time value = Olympic[]
       if (value != null){
         //get the numbers below the title
         this.getTopStat$ = this.olympicService.getTopStatHome();
         //get pieChartValues
         this.pieData = this.olympicService.getPieChartValues(value);
-      }
+      }//value not null
     });//subscribe
     
   }//ngOnInit
@@ -80,8 +84,10 @@ goDetail(pCountryEvent: Statistic): void {
  * 
  */
 ngOnDestroy() {
-  this.destroy$.next();
-  this.destroy$.complete();
+  this.myLog.debug("Home.ngOnDestroy...");
+  this.destroy$.unsubscribe(); //mentor code
+  //this.destroy$.next();      //internet code
+  //this.destroy$.complete();  //internet code
 }
 
 
