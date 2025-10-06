@@ -2,6 +2,12 @@ import { Injectable } from "@angular/core";
 
 export enum LogLevel { All = 0, Debug = 1, Info = 2, Warn = 3, Error = 4, Fatal = 5, Off = 6 }
 
+/**
+ * usage : in a s file : 
+ * inject : private myLog: MyLoggingService in constructor
+ * write : this.myLog.debug("Home.ngOnDestroy..."); or this.myLog.info("CLIC!....   url?country=" + pCountryEvent.name.split('.')[0]);
+ */
+
 @Injectable({
   providedIn: 'root'
 })

@@ -1,4 +1,4 @@
-<div><a routerLink="">Go back</a></div> 
+<div><a routerLink="" class="back-arrow">&lt;==BACK==</a></div> 
 <div class="container">
   <div class="row">
     <div class=" green-box">
@@ -9,20 +9,20 @@
     <div class="container-stat">
       <div *ngFor="let item of (this.getStat$ | async); let i = index;">
         <div *ngIf="i==0" class="white-box">
-          <b>Numbers of entries</b> <br> {{item}}
+          Numbers of entries <br> <b>{{item}}</b>
         </div>
         <div *ngIf="i==1" class="white-box">
-          <b>Total number of medals</b> <br> {{item}}
+          Total number of medals <br> <b>{{item}}</b>
         </div>
         <div *ngIf="i==2" class="white-box">
-          <b>Total number of athletes</b> <br> {{item}}
+          Total number of athletes <br> <b>{{item}}</b>
         </div>
       </div>
     </div>
   </div>
   <div class="row">
     <div class="line-chart">
-    <ngx-charts-line-chart
+    <ngx-charts-line-chart class="my-chart"
       [results]="lineData"
       [xAxis]="true"
       [yAxis]="true"
@@ -32,7 +32,20 @@
       [showXAxisLabel]="true"
       [showYAxisLabel]="true"
       [xAxisLabel]="'Dates'"
-      [yAxisLabel]="'Number of medals'">
+      [yAxisLabel]="'Number of medals'"
+      [scheme]="colorScheme">
+        <ng-template #tooltipTemplate let-model="model">
+          <div class="my-tooltip">
+            <strong>{{model.series}}</strong><br>{{ model.name }} {{ model.value }}
+          </div>
+        </ng-template>
+        <ng-template #seriesTooltipTemplate let-model="model">
+          <div class="my-tooltip">
+            Country : <strong>{{countryName}}</strong><br>
+            Year : {{model[0].name }}<br>
+            Value : {{ model[0].value}}
+          </div>
+        </ng-template>
     </ngx-charts-line-chart>
     </div>
   </div>

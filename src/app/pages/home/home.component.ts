@@ -81,16 +81,12 @@ goDetail(pCountryEvent: Statistic): void {
 }
 
 /**
- * 
+ * onDestroy function : unsubscribe the observable
  */
 ngOnDestroy() {
   this.myLog.debug("Home.ngOnDestroy...");
-  this.destroy$.unsubscribe(); //mentor code
-  //this.destroy$.next();      //internet code
-  //this.destroy$.complete();  //internet code
+  this.destroy$.unsubscribe(); 
 }
-
-
 
 }// class
 

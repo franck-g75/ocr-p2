@@ -1,5 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+
 import { Observable, of, Subject, takeUntil, tap } from 'rxjs';
 import { DetailedStatistic } from 'src/app/core/models/DetailedStatistic';
 import { CountryIdNotNumericError } from 'src/app/core/models/errors/CountryIdNotNumericError';
@@ -7,6 +8,7 @@ import { CountryNotFoundError } from 'src/app/core/models/errors/CountryNotFound
 import { Olympic } from 'src/app/core/models/Olympic';
 import { MyLoggingService } from 'src/app/core/services/my.loging.service';
 import { OlympicService } from 'src/app/core/services/olympic.service';
+import { Color, ScaleType  } from '@swimlane/ngx-charts';
 
 @Component({
   selector: 'app-detail',
@@ -17,11 +19,18 @@ export class DetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private destroy$ = new Subject<void>();
 
-  //public olympics$: Observable<Olympic[] | null> = of(null);
   public getStat$: Observable<Number[] | null> = of(null); 
   public countryName: string | null = null; 
   public lineData: DetailedStatistic[] | null = null; // datas of the line chart
+  public colorScheme: Color = { //default color of ngx-charts-line-chart
+    domain: ['#0000ee'], 
+    group: ScaleType.Ordinal, 
+    selectable: true, // => boolean (true / false)
+    name: 'Customer Usage'
+  };
+  
   private olympic: Olympic | undefined ; //an object olympic to contain the country
+
   private countryParam: string = this.route.snapshot.queryParamMap.get('country')??"-1";
   constructor(
       private olympicService: OlympicService,
@@ -31,10 +40,7 @@ export class DetailComponent implements OnInit {
   ngOnInit(): void {
     this.myLog.info("detail.ngOnInit...");
     
-    //let tabNb: number[] = [];         //a tab that will contain 3 numbers to write below the title
-
-
-    this.olympicService.getOlympics()
+        this.olympicService.getOlympics()
           .pipe(tap(val => this.myLog.info("detail.tap..." + val)),takeUntil(this.destroy$))
           .subscribe(value => {
 
@@ -43,8 +49,6 @@ export class DetailComponent implements OnInit {
           //-the second time value = Olympic[]
           if (value != null){
 
-            
-            
             /**
              * get the olympic object with the url parameter
              */
@@ -72,14 +76,11 @@ export class DetailComponent implements OnInit {
       });//subscribe
     }//ngOnInit
 
-
 /**
- * 
+ * onDestroy function : unsubscribe the observable
  */
 ngOnDestroy() {
   this.myLog.debug("Detail.ngOnDestroy...");
-  this.destroy$.unsubscribe(); //mentor code
-  //this.destroy$.next();      //internet found
-  //this.destroy$.complete();  //internet found
+  this.destroy$.unsubscribe();
 }
 }

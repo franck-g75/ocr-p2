@@ -27,7 +27,7 @@ export class OlympicService {
   //chargement des données
   /**
    * data loading
-   * @returns void
+   * @returns 
    */ 
   loadInitialData() {
     return this.http.get<Olympic[]>(this.olympicUrl).pipe(
@@ -253,7 +253,7 @@ export class OlympicService {
   /**
    * 
    * @param olympic 
-   * @returns the data values of the lineChart
+   * @returns the data values of the detail page
    */
   getLineChartValues(olympic: Olympic): DetailedStatistic[] | null {
     let lineData: DetailedStatistic[] | null = null;
