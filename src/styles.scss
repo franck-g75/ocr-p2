@@ -92,6 +92,11 @@ $myRed: red;
   width: 45%;
   margin-left: auto;  //center
   margin-right: auto; //center
+
+  //media query for small screen
+  @media (max-width: 300px) {
+    width: 100%;
+  }
 }
 
 //line color

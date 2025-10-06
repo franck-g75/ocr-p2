@@ -39,14 +39,6 @@ export class OlympicService {
         } else if (value.length==0){
           throw new EmptyTableFoundError('EmptyTableFoundError','The table in the file is empty');
         }
-        /* else {
-          this.start=value[0].id;
-          if (this.start==1){
-            throw new StartAtOneError("StartAtOneError","The ids of the file start at 1 not zero");
-          }
-        }
-        //code never executed because file table start at 1 and the StartAtOneError is raised
-        */
         //console.log(value);//write the entire table ine the log...
         this.start=value[0].id;
         this.olympics$.next(value);
@@ -72,9 +64,6 @@ export class OlympicService {
     return this.olympics$.asObservable();
   }
 
-  
-  
-
   /**
    * 
    * @returns the number of different countries in the file
@@ -83,8 +72,6 @@ export class OlympicService {
     const oc = this.getOlympicsValue();
     return oc ? oc.length : 0;
   }
-
-
   
   /**
    * 
@@ -102,7 +89,6 @@ export class OlympicService {
     });
     return oy ? oy.length-1 : 0;
   }
-
   
   /**
    * 
